@@ -1,237 +1,241 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rootLayout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     android:orientation="vertical"
-    android:background="#121212">
+    android:fitsSystemWindows="true"
+    android:padding="16dp"
+    android:background="#0F0F11">
 
-    <!-- Title -->
-
-    <ImageView
-        android:layout_marginTop="30dp"
+    <!-- Top Bar -->
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:src="@drawable/ic_logo"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginHorizontal="5dp"
+        android:layout_height="64dp"
+        android:background="@drawable/topbar_bg"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:gravity="center_vertical">
 
-    <!-- RAW INPUT -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Raw Order Text:"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        android:paddingBottom="8dp" />
+        <!-- App logo -->
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_logo"
+            android:scaleType="fitCenter"
+            android:contentDescription="App logo" />
 
+
+        <!-- Settings button with PNG icon -->
+        <ImageButton
+            android:id="@+id/btnSettings"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_settings_modern"
+            android:contentDescription="Settings"
+            android:background="@drawable/icon_bg"
+            android:padding="8dp"
+            android:scaleType="centerInside"
+            app:tint="#FFFFFF" />
+    </RelativeLayout>
+
+
+
+
+
+    <!-- Text Input Area Card -->
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_marginHorizontal="5dp"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/bg_rounded_card_dark"
-        android:padding="1dp">
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/card_bg">
 
         <EditText
             android:id="@+id/etRawText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="top|start"
-            android:background="@android:color/transparent"
             android:hint="Paste customer messages here..."
-            android:inputType="textMultiLine"
-            android:padding="16dp"
-            android:scrollbars="vertical"
-            android:textSize="14sp"
             android:textColor="#FFFFFF"
-            android:textColorHint="#888888" />
+            android:textColorHint="#AFAFAF"
+            android:background="@null"
+            android:textSize="15sp"/>
     </LinearLayout>
 
-    <!-- MODEL SELECTOR -->
+
+    <!-- Row: Model Selector + Generate Button -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingBottom="12dp"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/bg_rounded_card_dark"
-        android:padding="12dp">
+        android:layout_marginTop="12dp"
+        android:layout_marginHorizontal="5dp"
+        android:gravity="center_vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Model:"
-            android:textSize="16sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold" />
-
-        <Spinner
-            android:id="@+id/spModel"
+        <!-- Model Selector (Left) -->
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="12dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_spinner_dark"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:spinnerMode="dropdown"
-            android:popupBackground="#1E1E1E" />
+            android:layout_height="45dp"
+            android:background="@drawable/card_bg"
+            android:padding="10dp"
+            android:gravity="center_vertical">
+
+            <Spinner
+                android:id="@+id/spModel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="12dp"
+            android:layout_height="1dp" />
+
+        <!-- Generate Orders (Right) -->
+        <Button
+            android:id="@+id/btnGenerate"
+            android:layout_width="160dp"
+            android:layout_height="45dp"
+            android:text="Generate"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:background="@drawable/btn_primary"
+            android:gravity="center_vertical"
+            android:drawablePadding="10dp"
+            android:paddingHorizontal="12dp"
+            android:drawableStart="@drawable/ic_gemini_logo"/>
     </LinearLayout>
 
-    <!-- PRINTER SELECTOR -->
+
+
+    <!-- Row 1 Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="5dp"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingBottom="12dp"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/bg_rounded_card_dark"
-        android:padding="12dp">
+        android:layout_marginTop="12dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Printer:"
-            android:textSize="16sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvPrinter"
+        <Button
+            android:id="@+id/btnViewOrders"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
             android:layout_weight="1"
-            android:text="No printer selected"
-            android:textSize="14sp"
-            android:textColor="#CCCCCC"
-            android:padding="8dp" />
+            android:layout_height="45dp"
+            android:text="View List"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="#F19CBB"
+            android:background="@drawable/btn_outline"/>
+
+
+
+        <View
+            android:layout_width="12dp"
+            android:layout_height="1dp" />
+
+        <Button
+            android:id="@+id/btnCreatePathaoOrders"
+            android:layout_width="60dp"
+            android:layout_weight="1"
+            android:layout_height="45dp"
+            android:text="Make Orders"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:background="@drawable/btn_primary"
+            android:gravity="center_vertical"
+            android:drawablePadding="30dp"
+            android:paddingHorizontal="12dp"
+            android:drawableStart="@drawable/ic_pathao_logo"/>
+
+    </LinearLayout>
+
+
+    <!-- Row 2 Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="5dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp">
 
         <Button
             android:id="@+id/btnSelectPrinter"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:text="Select"
-            android:textSize="14sp"
-            android:textColor="#121212"
-            android:background="@drawable/bg_button_primary_dark"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textAllCaps="false" />
-    </LinearLayout>
+            android:layout_height="45dp"
+            android:text="Add Printer"
+            android:textSize="13sp"
+            android:textColor="#F19CBB"
+            android:paddingHorizontal="9dp"
+            android:background="@drawable/btn_outline"/>
 
-    <!-- GENERATE BUTTON -->
-    <!-- ALTERNATIVE GENERATE BUTTON USING LINEARLAYOUT -->
-    <LinearLayout
-        android:id="@+id/btnGenerate"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:background="@drawable/bg_button_primary_dark"
-        android:layout_marginBottom="8dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackground">
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_gemini_logo"
-            android:layout_marginEnd="8dp" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvPrinter"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Generate"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#121212" />
-    </LinearLayout>
-
-    <!-- SECOND LINE BUTTONS: PRINT ALL + SAVE EXCEL -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingBottom="8dp">
+            android:layout_marginHorizontal="7dp"
+            android:text="None"
+            android:textColor="#888888"
+            android:gravity="center_vertical" />
 
         <Button
             android:id="@+id/btnPrintAll"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="4dp"
-            android:text="Print All"
-            android:textSize="14sp"
-            android:textColor="#F19CBB"
-            android:background="@drawable/bg_button_outline_dark"
-            android:textAllCaps="false" />
-
-        <Button
-            android:id="@+id/btnSaveExcel"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:layout_marginStart="4dp"
-            android:text="Save Excel"
-            android:textSize="14sp"
-            android:textColor="#F19CBB"
-            android:background="@drawable/bg_button_outline_dark"
-            android:textAllCaps="false" />
-    </LinearLayout>
-
-    <!-- NEW BUTTON: CREATE PATHAO ORDERS -->
-    <LinearLayout
-        android:id="@+id/btnCreatePathaoOrders"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:background="@drawable/bg_button_primary_dark"
-        android:layout_marginBottom="8dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?android:attr/selectableItemBackground">
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_pathao_logo"
-            android:layout_marginEnd="8dp" />
-
-        <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Create Pathao Orders"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#121212" />
+            android:textSize="13sp"
+            android:layout_height="45dp"
+            android:text="Print All"
+            android:paddingHorizontal="20dp"
+            android:textColor="#000000"
+            android:background="@drawable/btn_primary"/>
     </LinearLayout>
 
-    <!-- PROGRESS BAR -->
+
+    <Button
+        android:id="@+id/btnSaveExcel"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="Save Excel"
+        android:layout_marginHorizontal="5dp"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="#F19CBB"
+        android:background="@drawable/btn_outline"
+        android:layout_marginTop="12dp"/>
+
+
+
+    <!-- Progress + Status -->
     <ProgressBar
         android:id="@+id/progressBar"
-        style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:layout_marginTop="16dp"
-        android:max="100"
-        android:progress="0"
-        android:progressDrawable="@drawable/progress_bar_dark" />
+        android:layout_height="6dp"
+        android:layout_marginHorizontal="5dp"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_marginTop="10dp"
+        android:progressTint="#F19CBB"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/tvStatus"
+        android:layout_marginHorizontal="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Status: Ready"
-        android:textSize="14sp"
-        android:textColor="#BB86FC"
-        android:paddingTop="8dp" />
+        android:text="Ready"
+        android:textColor="#AAAAAA"
+        android:gravity="center"
+        android:layout_marginTop="4dp"
+        android:textSize="14sp"/>
 
 </LinearLayout>
