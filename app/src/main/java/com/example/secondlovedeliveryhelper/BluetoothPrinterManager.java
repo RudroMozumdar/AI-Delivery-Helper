@@ -113,7 +113,8 @@ public class BluetoothPrinterManager {
 
     private String format(OrderItem o) {
         String line = "------------------------------\n";
-        return line +
+        return "            Ferdous           \n" +
+                line +
                 "Name   : " + safe(o.name) + "\n" +
                 "Phone  : " + safe(o.phone) + "\n" +
                 "Details: " + safe(o.details) + "\n\n" +

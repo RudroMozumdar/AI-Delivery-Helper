@@ -6,6 +6,8 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.secondlovedeliveryhelper.databinding.ActivityMainBinding;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothPrinterManager printerManager;
     private BluetoothDevice selectedDevice;
     private BluetoothAdapter adapter;
+    private ClipboardManager clipboardManager;
+
+    // For Undo Clear feature
+    private String lastClearedText = "";
 
     private final ActivityResultLauncher<String[]> permissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> loadSavedPrinter());
@@ -55,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        // Setup UI Logic
         setupObservers();
         setupButtons();
 
@@ -63,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
         BluetoothManager manager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         adapter = manager.getAdapter();
         printerManager = new BluetoothPrinterManager(this);
+
+        clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
         loadSavedPrinter();
         setupModelSpinner();
@@ -87,15 +95,108 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // ------------------------------
+    //         PASTE LOGIC
+    // ------------------------------
+    private void pasteFromClipboard() {
+        if (!clipboardManager.hasPrimaryClip()) {
+            showToast("Clipboard is empty");
+            return;
+        }
+
+        ClipData clipData = clipboardManager.getPrimaryClip();
+        if (clipData == null || clipData.getItemCount() == 0) {
+            showToast("Clipboard is empty");
+            return;
+        }
+
+        ClipData.Item item = clipData.getItemAt(0);
+        String pasteText = item.getText().toString();
+
+        if (pasteText.isEmpty()) {
+            showToast("No text to paste");
+            return;
+        }
+
+        int start = Math.max(binding.etRawText.getSelectionStart(), 0);
+        int end = Math.max(binding.etRawText.getSelectionEnd(), 0);
+
+        binding.etRawText.getText().replace(Math.min(start, end), Math.max(start, end), pasteText);
+
+        showToast("Text pasted successfully");
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    // ------------------------------
+    //   CLEAR + UNDO + ANIMATION
+    // ------------------------------
+    private void clearTextWithConfirm() {
+
+        if (binding.etRawText.getText().toString().trim().isEmpty()) {
+            showToast("Nothing to clear");
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Clear all text?")
+                .setMessage("Do you want to clear the message field?")
+                .setPositiveButton("Clear", (dialog, which) -> performClearWithAnimation())
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void performClearWithAnimation() {
+
+        lastClearedText = binding.etRawText.getText().toString();
+
+        binding.etRawText.animate()
+                .alpha(0f)
+                .setDuration(200)
+                .withEndAction(() -> {
+
+                    binding.etRawText.setText("");
+
+                    binding.etRawText.animate()
+                            .alpha(1f)
+                            .setDuration(150)
+                            .start();
+
+                    showUndoSnackbar();
+                })
+                .start();
+    }
+
+    private void showUndoSnackbar() {
+        Snackbar.make(binding.getRoot(), "Text cleared", Snackbar.LENGTH_LONG)
+                .setAction("Undo", v -> {
+                    binding.etRawText.setText(lastClearedText);
+                    showToast("Restored");
+                })
+                .show();
+    }
+
+    // ------------------------------
+    //        BUTTON SETUP
+    // ------------------------------
     private void setupButtons() {
         binding.btnSettings.setOnClickListener(v ->
                 startActivity(new Intent(this, SettingsActivity.class)));
+
+        binding.btnPaste.setOnClickListener(v -> pasteFromClipboard());
+
+        binding.btnClear.setOnClickListener(v -> clearTextWithConfirm());
 
         binding.btnViewOrders.setOnClickListener(v ->
                 startActivity(new Intent(this, OrderListActivity.class)));
 
         binding.btnGenerate.setOnClickListener(v ->
-                viewModel.generateOrders(binding.etRawText.getText().toString(), binding.spModel.getSelectedItem().toString()));
+                viewModel.generateOrders(
+                        binding.etRawText.getText().toString(),
+                        binding.spModel.getSelectedItem().toString()
+                ));
 
         binding.btnCreatePathaoOrders.setOnClickListener(v -> viewModel.createPathaoOrders());
 
@@ -125,9 +226,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printInvoices() {
-        if (selectedDevice == null) { toast("Select printer first"); return; }
+        if (selectedDevice == null) {
+            toast("Select printer first");
+            return;
+        }
         List<OrderItem> orders = viewModel.getOrders().getValue();
-        if (orders == null || orders.isEmpty()) { toast("Generate orders first"); return; }
+        if (orders == null || orders.isEmpty()) {
+            toast("Generate orders first");
+            return;
+        }
 
         binding.tvStatus.setText("Printing...");
         new Thread(() -> {
@@ -159,17 +266,25 @@ public class MainActivity extends AppCompatActivity {
                         getSharedPreferences("PrinterPrefs", MODE_PRIVATE).edit()
                                 .putString("PrinterAddress", selectedDevice.getAddress()).apply();
                     }).show();
-        } catch (Exception e) { toast("Pair printer first"); }
+        } catch (Exception e) {
+            toast("Pair printer first");
+        }
     }
 
     @SuppressLint("MissingPermission")
     private void loadSavedPrinter() {
         String addr = getSharedPreferences("PrinterPrefs", MODE_PRIVATE).getString("PrinterAddress", null);
         if (addr != null && adapter != null && adapter.isEnabled()) {
-            try { selectedDevice = adapter.getRemoteDevice(addr); binding.tvPrinter.setText("Saved: " + selectedDevice.getName()); }
-            catch (Exception e) { binding.tvPrinter.setText("Printer Error"); }
+            try {
+                selectedDevice = adapter.getRemoteDevice(addr);
+                binding.tvPrinter.setText("Saved: " + selectedDevice.getName());
+            } catch (Exception e) {
+                binding.tvPrinter.setText("Printer Error");
+            }
         }
     }
 
-    private void toast(String msg) { Toast.makeText(this, msg, Toast.LENGTH_SHORT).show(); }
+    private void toast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
 }
