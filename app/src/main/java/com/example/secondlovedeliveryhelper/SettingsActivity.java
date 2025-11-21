@@ -145,7 +145,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                 RequestBody body = RequestBody.create(json.toString(), MediaType.get("application/json"));
                 Request request = new Request.Builder()
-                        .url("[https://api-hermes.pathao.com/aladdin/api/v1/issue-token](https://api-hermes.pathao.com/aladdin/api/v1/issue-token)")
+                        .url("https://api-hermes.pathao.com/aladdin/api/v1/issue-token")
                         .post(body)
                         .build();
 
