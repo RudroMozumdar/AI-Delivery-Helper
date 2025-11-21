@@ -10,8 +10,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -22,7 +20,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.secondlovedeliveryhelper.databinding.ActivityMainBinding;
@@ -134,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
     //   CLEAR + UNDO + ANIMATION
     // ------------------------------
     private void clearTextWithConfirm() {
-
         if (binding.etRawText.getText().toString().trim().isEmpty()) {
             showToast("Nothing to clear");
             return;
@@ -149,21 +145,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void performClearWithAnimation() {
-
         lastClearedText = binding.etRawText.getText().toString();
-
         binding.etRawText.animate()
                 .alpha(0f)
                 .setDuration(200)
                 .withEndAction(() -> {
-
                     binding.etRawText.setText("");
-
                     binding.etRawText.animate()
                             .alpha(1f)
                             .setDuration(150)
                             .start();
-
                     showUndoSnackbar();
                 })
                 .start();
@@ -198,7 +189,21 @@ public class MainActivity extends AppCompatActivity {
                         binding.spModel.getSelectedItem().toString()
                 ));
 
-        binding.btnCreatePathaoOrders.setOnClickListener(v -> viewModel.createPathaoOrders());
+        // UPDATED: Confirmation Dialog for Pathao Orders
+        binding.btnCreatePathaoOrders.setOnClickListener(v -> {
+            List<OrderItem> currentOrders = viewModel.getOrders().getValue();
+            if (currentOrders == null || currentOrders.isEmpty()) {
+                toast("Generate orders first!");
+                return;
+            }
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Create Pathao Orders")
+                    .setMessage("Are you sure you want to create " + currentOrders.size() + " orders on Pathao?")
+                    .setPositiveButton("Yes, Create", (dialog, which) -> viewModel.createPathaoOrders())
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
 
         binding.btnSaveExcel.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
@@ -212,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupModelSpinner() {
-        String[] models = {"gemini-2.5-flash", "gemini-2.5-pro"};
+        String[] models = {"gemini-2.5-flash", "gemini-2.5-pro", "gemini-3-pro-preview"};
         binding.spModel.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, models));
     }
 

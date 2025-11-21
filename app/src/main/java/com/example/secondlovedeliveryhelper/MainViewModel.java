@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -14,7 +13,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,8 +99,8 @@ public class MainViewModel extends AndroidViewModel {
 
         executor.execute(() -> {
             try {
-                String jsonBody = buildPathaoJson(orders);
-                String url = "https://api-hermes.pathao.com/aladdin/api/v1/orders/bulk";
+                String jsonBody = buildPathaoJson(orders, prefs); // Pass prefs to helper
+                String url = "[https://api-hermes.pathao.com/aladdin/api/v1/orders/bulk](https://api-hermes.pathao.com/aladdin/api/v1/orders/bulk)";
 
                 RequestBody body = RequestBody.create(jsonBody, MediaType.get("application/json"));
 
@@ -124,16 +122,28 @@ public class MainViewModel extends AndroidViewModel {
                     statusMessage.postValue("Pathao Failed (" + response.code() + "): " + respBody);
                 }
             } catch (Exception e) {
-                statusMessage.postValue("Network Error: " + e.getMessage());
+                statusMessage.postValue("Network Error / Config Error: " + e.getMessage());
             } finally {
                 isLoading.postValue(false);
             }
         });
     }
 
-    private String buildPathaoJson(List<OrderItem> orders) {
+    private String buildPathaoJson(List<OrderItem> orders, SharedPreferences prefs) throws Exception {
         JsonObject root = new JsonObject();
         JsonArray ordersArray = new JsonArray();
+
+        // Get Store ID from Settings
+        String storeIdStr = prefs.getString("pathao_store_id", "").trim();
+        int storeId;
+        if (storeIdStr.isEmpty()) {
+            throw new Exception("Store ID missing in Settings");
+        }
+        try {
+            storeId = Integer.parseInt(storeIdStr);
+        } catch (NumberFormatException e) {
+            throw new Exception("Invalid Store ID: must be a number");
+        }
 
         for (OrderItem item : orders) {
             JsonObject orderObj = new JsonObject();
@@ -143,7 +153,7 @@ public class MainViewModel extends AndroidViewModel {
                 amount = (int) Double.parseDouble(item.amount.replaceAll("[^\\d.]", ""));
             } catch (Exception ignored) {}
 
-            orderObj.addProperty("store_id", 82357); // Consider making this configurable too
+            orderObj.addProperty("store_id", storeId); // Used from settings
             orderObj.addProperty("delivery_type", 48);
             orderObj.addProperty("item_type", 2);
             orderObj.addProperty("item_quantity", 1);

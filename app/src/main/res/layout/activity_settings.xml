@@ -11,8 +11,6 @@
         android:fitsSystemWindows="true"
         android:orientation="vertical">
 
-
-        <!-- Title -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -22,9 +20,6 @@
             android:textStyle="bold"
             android:layout_marginBottom="16dp" />
 
-
-
-        <!-- Gemini API Key Card -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,13 +45,8 @@
                 android:textColor="#FFFFFF"
                 android:textColorHint="#888888"
                 android:padding="10dp" />
-
         </LinearLayout>
 
-
-
-
-        <!-- Pathao API Credentials Card -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -73,6 +63,17 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp"/>
+
+            <EditText
+                android:id="@+id/etStoreId"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:inputType="number"
+                android:hint="Store ID (e.g. 82357)"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#888888"
+                android:padding="10dp" />
 
             <EditText
                 android:id="@+id/etClientId"
@@ -137,10 +138,6 @@
                 android:layout_marginTop="6dp" />
         </LinearLayout>
 
-
-
-
-        <!-- Printer Logo Card -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -190,10 +187,6 @@
                 android:layout_marginTop="6dp"/>
         </LinearLayout>
 
-
-
-
-        <!-- Save Settings -->
         <Button
             android:id="@+id/btnSave"
             android:layout_width="match_parent"

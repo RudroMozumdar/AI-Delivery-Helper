@@ -1,7 +1,6 @@
 package com.example.secondlovedeliveryhelper;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -31,7 +30,7 @@ import okhttp3.Response;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private EditText etGeminiKey, etClientId, etClientSecret, etUsername, etPassword;
+    private EditText etGeminiKey, etStoreId, etClientId, etClientSecret, etUsername, etPassword;
     private TextView tvTokenStatus, tvLogoPath;
     private ImageView ivLogoPreview;
     private SharedPreferences prefs;
@@ -59,6 +58,7 @@ public class SettingsActivity extends AppCompatActivity {
         prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
 
         etGeminiKey = findViewById(R.id.etGeminiKey);
+        etStoreId = findViewById(R.id.etStoreId);
         etClientId = findViewById(R.id.etClientId);
         etClientSecret = findViewById(R.id.etClientSecret);
         etUsername = findViewById(R.id.etUsername);
@@ -86,6 +86,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void loadSettings() {
         etGeminiKey.setText(prefs.getString("gemini_api_key", ""));
+        // Load Store ID, default empty
+        etStoreId.setText(prefs.getString("pathao_store_id", ""));
+
         etClientId.setText(prefs.getString("pathao_client_id", ""));
         etClientSecret.setText(prefs.getString("pathao_client_secret", ""));
         etUsername.setText(prefs.getString("pathao_username", ""));
@@ -101,6 +104,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void saveSettings() {
         prefs.edit()
                 .putString("gemini_api_key", etGeminiKey.getText().toString().trim())
+                .putString("pathao_store_id", etStoreId.getText().toString().trim())
                 .putString("pathao_client_id", etClientId.getText().toString().trim())
                 .putString("pathao_client_secret", etClientSecret.getText().toString().trim())
                 .putString("pathao_username", etUsername.getText().toString().trim())
@@ -141,7 +145,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                 RequestBody body = RequestBody.create(json.toString(), MediaType.get("application/json"));
                 Request request = new Request.Builder()
-                        .url("https://api-hermes.pathao.com/aladdin/api/v1/issue-token")
+                        .url("[https://api-hermes.pathao.com/aladdin/api/v1/issue-token](https://api-hermes.pathao.com/aladdin/api/v1/issue-token)")
                         .post(body)
                         .build();
 
