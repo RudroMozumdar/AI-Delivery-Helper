@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -52,11 +53,21 @@ public class OrderListActivity extends AppCompatActivity {
             recyclerView.setAdapter(new OrderAdapter(orders, this::printSingleOrder));
 
             // Set up Print All button
-            findViewById(R.id.btnPrintAllHeader).setOnClickListener(v -> printAllOrders(orders));
+            findViewById(R.id.btnPrintAllHeader).setOnClickListener(v -> showPrintAllConfirmation(orders));
 
         } catch (Exception e) {
             Toast.makeText(this, "Error loading CSV: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void showPrintAllConfirmation(List<OrderItem> orders) {
+        if (orders == null || orders.isEmpty()) return;
+        new AlertDialog.Builder(this)
+                .setTitle("Print All Orders")
+                .setMessage("Are you sure you want to print " + orders.size() + " orders?")
+                .setPositiveButton("Yes, Print", (dialog, which) -> printAllOrders(orders))
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void printAllOrders(List<OrderItem> orders) {
