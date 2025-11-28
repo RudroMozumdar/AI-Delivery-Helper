@@ -50,9 +50,45 @@ public class OrderListActivity extends AppCompatActivity {
             }
             // 2. Pass the print action listener to the adapter
             recyclerView.setAdapter(new OrderAdapter(orders, this::printSingleOrder));
+
+            // Set up Print All button
+            findViewById(R.id.btnPrintAllHeader).setOnClickListener(v -> printAllOrders(orders));
+
         } catch (Exception e) {
             Toast.makeText(this, "Error loading CSV: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void printAllOrders(List<OrderItem> orders) {
+        if (orders == null || orders.isEmpty()) return;
+
+        SharedPreferences prefs = getSharedPreferences("PrinterPrefs", MODE_PRIVATE);
+        String address = prefs.getString("PrinterAddress", null);
+
+        if (address == null) {
+            Toast.makeText(this, "No printer saved.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
+            Toast.makeText(this, "Bluetooth is off", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Toast.makeText(this, "Printing all orders...", Toast.LENGTH_SHORT).show();
+
+        executor.execute(() -> {
+            try {
+                BluetoothDevice device = bluetoothAdapter.getRemoteDevice(address);
+                printerManager.connect(this, device);
+                printerManager.printInvoices(this, orders);
+                printerManager.close();
+                runOnUiThread(() -> Toast.makeText(OrderListActivity.this, "All Printed!", Toast.LENGTH_SHORT).show());
+            } catch (Exception e) {
+                printerManager.close();
+                runOnUiThread(() -> Toast.makeText(OrderListActivity.this, "Print Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
+            }
+        });
     }
 
     // 3. Logic to print a single order

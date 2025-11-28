@@ -33,11 +33,15 @@
             android:layout_marginStart="12dp"
             android:layout_centerVertical="true"/>
 
-        <ImageView
-            android:id="@+id/btnSearch"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_search"
+        <ImageButton
+            android:id="@+id/btnPrintAllHeader"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_printer"
+            app:tint="#F19CBB"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"/>
 

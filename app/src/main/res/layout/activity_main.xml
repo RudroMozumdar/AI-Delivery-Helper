@@ -43,7 +43,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_settings_modern"
+            android:src="@drawable/ic_settings"
             app:tint="#000000" />
     </RelativeLayout>
 
