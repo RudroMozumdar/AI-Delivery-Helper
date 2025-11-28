@@ -152,13 +152,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <EditText android:id="@+id/etStoreId"/>
-                    <EditText android:id="@+id/etClientId"/>
-                    <EditText android:id="@+id/etClientSecret"/>
-                    <EditText android:id="@+id/etUsername"/>
-                    <EditText android:id="@+id/etPassword"/>
-                    <Button android:id="@+id/btnFetchToken"/>
-                    <TextView android:id="@+id/tvTokenStatus"/>
+                    <EditText android:id="@+id/etStoreId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <EditText android:id="@+id/etClientId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <EditText android:id="@+id/etClientSecret"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <EditText android:id="@+id/etUsername"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <EditText android:id="@+id/etPassword"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <Button android:id="@+id/btnFetchToken"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <TextView android:id="@+id/tvTokenStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
                 </LinearLayout>
 
             </LinearLayout>
