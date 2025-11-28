@@ -30,7 +30,7 @@ import okhttp3.Response;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private EditText etGeminiKey, etStoreId, etClientId, etClientSecret, etUsername, etPassword;
+    private EditText etGeminiKey, etPathaoKey, etStoreId, etClientId, etClientSecret, etUsername, etPassword;
     private TextView tvTokenStatus, tvLogoPath;
     private ImageView ivLogoPreview;
     private SharedPreferences prefs;
@@ -58,6 +58,7 @@ public class SettingsActivity extends AppCompatActivity {
         prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
 
         etGeminiKey = findViewById(R.id.etGeminiKey);
+        etPathaoKey = findViewById(R.id.etPathaoKey);
         etStoreId = findViewById(R.id.etStoreId);
         etClientId = findViewById(R.id.etClientId);
         etClientSecret = findViewById(R.id.etClientSecret);
@@ -72,11 +73,13 @@ public class SettingsActivity extends AppCompatActivity {
         findViewById(R.id.btnSave).setOnClickListener(v -> saveSettings());
         findViewById(R.id.btnFetchToken).setOnClickListener(v -> fetchToken());
         findViewById(R.id.btnSelectLogo).setOnClickListener(v -> selectLogo());
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
         String savedLogo = prefs.getString("printer_logo_uri", null);
         if(savedLogo != null) {
             try {
                 ivLogoPreview.setImageURI(Uri.parse(savedLogo));
+                ivLogoPreview.setPadding(0,0,0,0);
                 tvLogoPath.setText("Logo Loaded");
             } catch (Exception e) {
                 tvLogoPath.setText("Error loading saved logo");
@@ -86,6 +89,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void loadSettings() {
         etGeminiKey.setText(prefs.getString("gemini_api_key", ""));
+        // New: Load Pathao API Key (which we might just map to access token or a new key)
+        etPathaoKey.setText(prefs.getString("pathao_access_token", ""));
+
         // Load Store ID, default empty
         etStoreId.setText(prefs.getString("pathao_store_id", ""));
 
@@ -104,6 +110,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void saveSettings() {
         prefs.edit()
                 .putString("gemini_api_key", etGeminiKey.getText().toString().trim())
+                .putString("pathao_access_token", etPathaoKey.getText().toString().trim()) // Save the new key
                 .putString("pathao_store_id", etStoreId.getText().toString().trim())
                 .putString("pathao_client_id", etClientId.getText().toString().trim())
                 .putString("pathao_client_secret", etClientSecret.getText().toString().trim())
