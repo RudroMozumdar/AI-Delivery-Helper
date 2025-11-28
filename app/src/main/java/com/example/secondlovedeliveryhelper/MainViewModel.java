@@ -100,7 +100,7 @@ public class MainViewModel extends AndroidViewModel {
         executor.execute(() -> {
             try {
                 String jsonBody = buildPathaoJson(orders, prefs); // Pass prefs to helper
-                String url = "[https://api-hermes.pathao.com/aladdin/api/v1/orders/bulk](https://api-hermes.pathao.com/aladdin/api/v1/orders/bulk)";
+                String url = "https://api-hermes.pathao.com/aladdin/api/v1/orders/bulk";
 
                 RequestBody body = RequestBody.create(jsonBody, MediaType.get("application/json"));
 
