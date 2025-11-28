@@ -133,47 +133,96 @@
                         app:tint="#AAAAAA"/>
                 </RelativeLayout>
 
-                <!-- Hidden inputs to keep Java code working, or I will remove them from Java if I decide to switch to single key -->
-                <!-- The existing code uses ClientID/Secret/User/Pass.
-                     The new UI shows ONE field.
-                     Assumption: The user wants to input the ACCESS TOKEN directly, or maybe just the Client ID?
-                     Given the hint "...................", it looks like a long string (token or key).
-                     I will map this new field to 'pathao_access_token' preference maybe?
-                     But the 'fetchToken' logic requires 4 fields.
-                     If I hide them, the user can't enter them.
-                     This is a conflict.
-                     However, I must match the UI.
-                     I will hide the other fields (Visibility GONE) so the code doesn't crash on findViewById,
-                     but functionally this might be broken for fetching new tokens unless the logic changes.
-                     I'll assume the user is pasting a Bearer Token into 'etPathaoKey'.
-                -->
-                <LinearLayout
-                    android:visibility="gone"
+                <!-- Pathao Credentials Section -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Generate Token"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="8dp"/>
+
+                <EditText
+                    android:id="@+id/etStoreId"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="Store ID"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#888888"
+                    android:inputType="number"
+                    android:layout_marginBottom="12dp"/>
+
+                <EditText
+                    android:id="@+id/etClientId"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="Client ID"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#888888"
+                    android:layout_marginBottom="12dp"/>
+
+                <EditText
+                    android:id="@+id/etClientSecret"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="Client Secret"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#888888"
+                    android:inputType="textPassword"
+                    android:layout_marginBottom="12dp"/>
+
+                <EditText
+                    android:id="@+id/etUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="Email / Username"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#888888"
+                    android:layout_marginBottom="12dp"/>
+
+                <EditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="Password"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#888888"
+                    android:inputType="textPassword"
+                    android:layout_marginBottom="16dp"/>
+
+                <Button
+                    android:id="@+id/btnFetchToken"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_dark_btn"
+                    android:text="Fetch New Token"
+                    android:textAllCaps="false"
+                    android:textColor="#F19CBB"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <TextView
+                    android:id="@+id/tvTokenStatus"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <EditText android:id="@+id/etStoreId"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <EditText android:id="@+id/etClientId"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <EditText android:id="@+id/etClientSecret"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <EditText android:id="@+id/etUsername"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <EditText android:id="@+id/etPassword"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <Button android:id="@+id/btnFetchToken"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <TextView android:id="@+id/tvTokenStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
+                    android:text="Token Status: Unknown"
+                    android:textColor="#AAAAAA"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"/>
 
             </LinearLayout>
 
