@@ -83,6 +83,23 @@ public class MainActivity extends AppCompatActivity {
         viewModel.getLoading().observe(this, isLoading -> {
             binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.INVISIBLE);
             binding.progressBar.setIndeterminate(isLoading);
+
+            binding.btnGenerate.setEnabled(!isLoading);
+            if (isLoading) {
+                binding.btnGenerate.setAlpha(0.7f);
+                binding.ivGenerateIcon.animate().rotationBy(360f).setDuration(1000).withEndAction(() -> {
+                    if (binding.btnGenerate.isEnabled()) {
+                        binding.ivGenerateIcon.setRotation(0f);
+                    } else {
+                        // Continue animation loop if still loading
+                         binding.ivGenerateIcon.animate().rotationBy(360f).setDuration(1000).start();
+                    }
+                }).start();
+            } else {
+                binding.btnGenerate.setAlpha(1.0f);
+                binding.ivGenerateIcon.animate().cancel();
+                binding.ivGenerateIcon.setRotation(0f);
+            }
         });
 
         viewModel.getOrders().observe(this, orders -> {
