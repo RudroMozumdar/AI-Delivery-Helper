@@ -183,11 +183,14 @@ public class MainActivity extends AppCompatActivity {
         binding.btnViewOrders.setOnClickListener(v ->
                 startActivity(new Intent(this, OrderListActivity.class)));
 
-        binding.btnGenerate.setOnClickListener(v ->
-                viewModel.generateOrders(
-                        binding.etRawText.getText().toString(),
-                        binding.spModel.getSelectedItem().toString()
-                ));
+        // Modified for new UI where btnGenerate is a LinearLayout
+        binding.btnGenerate.setOnClickListener(v -> {
+             String model = "gemini-2.5-flash"; // Default model since spinner is hidden
+             if (binding.spModel.getSelectedItem() != null) {
+                 model = binding.spModel.getSelectedItem().toString();
+             }
+             viewModel.generateOrders(binding.etRawText.getText().toString(), model);
+        });
 
         // UPDATED: Confirmation Dialog for Pathao Orders
         binding.btnCreatePathaoOrders.setOnClickListener(v -> {
@@ -205,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
                     .show();
         });
 
+        // Hidden in new UI but kept for compatibility
         binding.btnSaveExcel.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
             intent.setType("text/csv");
@@ -212,7 +216,10 @@ public class MainActivity extends AppCompatActivity {
             saveExcelLauncher.launch(intent);
         });
 
+        // btnSelectPrinter is now a LinearLayout in new UI, safe to call setOnClickListener
         binding.btnSelectPrinter.setOnClickListener(v -> loadPairedDevices());
+
+        // btnPrintAll is hidden in new UI
         binding.btnPrintAll.setOnClickListener(v -> printInvoices());
     }
 

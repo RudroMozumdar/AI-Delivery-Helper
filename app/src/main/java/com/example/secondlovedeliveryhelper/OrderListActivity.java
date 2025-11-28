@@ -139,14 +139,14 @@ public class OrderListActivity extends AppCompatActivity {
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                tvName = itemView.findViewById(R.id.cardName);
-                tvPhone = itemView.findViewById(R.id.cardPhone);
-                tvAddress = itemView.findViewById(R.id.cardAddress);
-                tvDetails = itemView.findViewById(R.id.cardDetails);
-                tvAmount = itemView.findViewById(R.id.cardAmount);
+                tvName = itemView.findViewById(R.id.tvCustomerName);
+                tvPhone = itemView.findViewById(R.id.tvPhoneNumber);
+                tvAddress = itemView.findViewById(R.id.tvAddress);
+                tvDetails = itemView.findViewById(R.id.tvItems);
+                tvAmount = itemView.findViewById(R.id.tvPrice);
 
                 // This will now find the view regardless of whether it's an ImageButton or Button
-                btnPrintOne = itemView.findViewById(R.id.btnPrintOne);
+                btnPrintOne = itemView.findViewById(R.id.btnPrint);
             }
         }
     }
