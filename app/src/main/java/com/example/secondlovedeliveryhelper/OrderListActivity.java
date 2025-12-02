@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -50,9 +51,55 @@ public class OrderListActivity extends AppCompatActivity {
             }
             // 2. Pass the print action listener to the adapter
             recyclerView.setAdapter(new OrderAdapter(orders, this::printSingleOrder));
+
+            // Set up Print All button
+            findViewById(R.id.btnPrintAllHeader).setOnClickListener(v -> showPrintAllConfirmation(orders));
+
         } catch (Exception e) {
             Toast.makeText(this, "Error loading CSV: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void showPrintAllConfirmation(List<OrderItem> orders) {
+        if (orders == null || orders.isEmpty()) return;
+        new AlertDialog.Builder(this)
+                .setTitle("Print All Orders")
+                .setMessage("Are you sure you want to print " + orders.size() + " orders?")
+                .setPositiveButton("Yes, Print", (dialog, which) -> printAllOrders(orders))
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void printAllOrders(List<OrderItem> orders) {
+        if (orders == null || orders.isEmpty()) return;
+
+        SharedPreferences prefs = getSharedPreferences("PrinterPrefs", MODE_PRIVATE);
+        String address = prefs.getString("PrinterAddress", null);
+
+        if (address == null) {
+            Toast.makeText(this, "No printer saved.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
+            Toast.makeText(this, "Bluetooth is off", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Toast.makeText(this, "Printing all orders...", Toast.LENGTH_SHORT).show();
+
+        executor.execute(() -> {
+            try {
+                BluetoothDevice device = bluetoothAdapter.getRemoteDevice(address);
+                printerManager.connect(this, device);
+                printerManager.printInvoices(this, orders);
+                printerManager.close();
+                runOnUiThread(() -> Toast.makeText(OrderListActivity.this, "All Printed!", Toast.LENGTH_SHORT).show());
+            } catch (Exception e) {
+                printerManager.close();
+                runOnUiThread(() -> Toast.makeText(OrderListActivity.this, "Print Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
+            }
+        });
     }
 
     // 3. Logic to print a single order
@@ -139,14 +186,14 @@ public class OrderListActivity extends AppCompatActivity {
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                tvName = itemView.findViewById(R.id.cardName);
-                tvPhone = itemView.findViewById(R.id.cardPhone);
-                tvAddress = itemView.findViewById(R.id.cardAddress);
-                tvDetails = itemView.findViewById(R.id.cardDetails);
-                tvAmount = itemView.findViewById(R.id.cardAmount);
+                tvName = itemView.findViewById(R.id.tvCustomerName);
+                tvPhone = itemView.findViewById(R.id.tvPhoneNumber);
+                tvAddress = itemView.findViewById(R.id.tvAddress);
+                tvDetails = itemView.findViewById(R.id.tvItems);
+                tvAmount = itemView.findViewById(R.id.tvPrice);
 
                 // This will now find the view regardless of whether it's an ImageButton or Button
-                btnPrintOne = itemView.findViewById(R.id.btnPrintOne);
+                btnPrintOne = itemView.findViewById(R.id.btnPrint);
             }
         }
     }
